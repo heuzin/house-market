@@ -1,14 +1,16 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
 
-import PrivateRoute from "./components/PrivateRoute";
 import Navbar from "./components/Navbar";
-import Explore from "./pages/Explore";
-import Offers from "./pages/Offers";
-import Category from "./pages/Category";
-import Profile from "./pages/Profile";
-import SignIn from "./pages/SignIn";
+import PrivateRoute from "./components/PrivateRoute";
+
 import SignUp from "./pages/SignUp";
+import Offers from "./pages/Offers";
+import SignIn from "./pages/SignIn";
+import Profile from "./pages/Profile";
+import Explore from "./pages/Explore";
+import Category from "./pages/Category";
+import CreateListing from "./pages/CreateListing";
 import ForgotPassword from "./pages/ForgotPassword";
 
 function App() {
@@ -25,6 +27,7 @@ function App() {
           <Route path="/sign-in" element={<SignIn />} />
           <Route path="/sign-up" element={<SignUp />} />
           <Route path="/forgot-password" element={<ForgotPassword />} />
+          <Route path="/create-listing" element={<CreateListing />} />
         </Routes>
         <Navbar />
       </Router>
