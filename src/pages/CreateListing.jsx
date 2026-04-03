@@ -6,6 +6,7 @@ import {
   uploadBytesResumable,
   getDownloadURL,
 } from "firebase/storage";
+import { addDoc, collection, serverTimestamp } from "firebase/firestore";
 import { db } from "../firebase.config";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
@@ -119,7 +120,7 @@ const CreateListing = () => {
         const storage = getStorage();
         const fileName = `${auth.currentUser.uid}-${image.name}-${uuidv4()}`;
 
-        const storageRef = ref(storage, 'images/' + fileName)
+        const storageRef = ref(storage, "images/" + fileName);
 
         const uploadTask = uploadBytesResumable(storageRef, image);
 
@@ -147,12 +148,34 @@ const CreateListing = () => {
             getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
               resolve(downloadURL);
             });
-          }
-        )
-      })
-    }
+          },
+        );
+      });
+    };
 
+    const imgUrls = await Promise.all(
+      [...images].map((image) => storeImage(image)),
+    ).catch(() => {
+      setLoading(false);
+      return toast.error("Images not uploaded");
+    });
+
+    const formDataCopy = {
+      ...formData,
+      imgUrls,
+      geolocation,
+      timestamp: serverTimestamp(),
+    };
+
+    delete formDataCopy.images;
+    delete formDataCopy.address;
+    location && (formDataCopy.location = location);
+    !formDataCopy.offer && delete formDataCopy.discountedPrice;
+
+    const docRef = await addDoc(collection(db, "listings"), formDataCopy);
     setLoading(false);
+    toast.success("Listing saved");
+    navigate(`/category/${formDataCopy.type}/${docRef.id}`);
   };
 
   const onMutate = (e) => {
