@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { MapContainer, Marker, Popup, TileLayer } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
-import SwiperCore, { Navigation, Pagination, Scrollbar, A11y } from "swiper";
+import { Navigation, Pagination, Scrollbar, A11y } from "swiper/modules";
 import { Swiper, SwiperSlide } from "swiper/react";
 import "swiper/swiper-bundle.css";
 import { getDoc, doc } from "firebase/firestore";
@@ -38,18 +38,22 @@ const Listing = () => {
     return <Spinner />;
   }
 
-  console.log(listing?.imageUrls);
   return (
     <main>
-      <Swiper slidesPerView={1} pagination={{ clickable: true }}>
-        {listing?.imageUrls?.map((url, index) => {
-          console.log(listing?.imageUrls[index]);
+      <Swiper
+        modules={[Navigation, Pagination, Scrollbar, A11y]}
+        navigation
+        slidesPerView={1}
+        style={{ height: "200px" }}
+        pagination={{ clickable: true }}
+      >
+        {listing.imageUrls?.map((url, index) => {
           return (
             <SwiperSlide key={index}>
               <div
                 className="swiperSlideDiv"
                 style={{
-                  background: `url(${listing?.imageUrls[index]}) center no-repeat`,
+                  background: `url(${listing.imageUrls[index]}) center no-repeat`,
                   backgroundSize: "cover",
                 }}
               ></div>
