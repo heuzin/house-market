@@ -6,6 +6,7 @@ import {
   where,
   orderBy,
   limit,
+  startAfter,
 } from "firebase/firestore";
 import { db } from "../firebase.config";
 import { toast } from "react-toastify";
@@ -32,6 +33,7 @@ const Listings = (data) => {
 const Offers = () => {
   const [listings, setListings] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [lastFetchedListing, setLastFetchedListing] = useState(null);
 
   useEffect(() => {
     const fetchListings = async () => {
@@ -49,6 +51,9 @@ const Offers = () => {
 
         // Execute query
         const querySnap = await getDocs(q);
+
+        const lastVisible = querySnap.docs[querySnap.docs.length - 1];
+        setLastFetchedListing(lastVisible);
 
         const listings = [];
 
@@ -70,6 +75,44 @@ const Offers = () => {
     fetchListings();
   }, []);
 
+  // Pagination / Load More
+  const onFetchMoreListings = async () => {
+    try {
+      // Get reference
+      const listingsRef = collection(db, "listings");
+
+      // Create a query
+      const q = query(
+        listingsRef,
+        where("offer", "==", true),
+        orderBy("timestamp", "desc"),
+        startAfter(lastFetchedListing),
+        limit(10),
+      );
+
+      // Execute query
+      const querySnap = await getDocs(q);
+
+      const lastVisible = querySnap.docs[querySnap.docs.length - 1];
+      setLastFetchedListing(lastVisible);
+
+      const listings = [];
+
+      querySnap.forEach((doc) => {
+        return listings.push({
+          id: doc.id,
+          data: doc.data(),
+        });
+      });
+
+      setListings((prevState) => [...prevState, ...listings]);
+      setLoading(false);
+    } catch (error) {
+      console.error("ERROR:", error);
+      toast.error("Could not fetch listings");
+    }
+  };
+
   let content;
   if (loading) {
     content = <Spinner />;
@@ -86,6 +129,13 @@ const Offers = () => {
       </header>
 
       {content}
+      <br />
+      <br />
+      {lastFetchedListing && (
+        <p className="loadMore" onClick={onFetchMoreListings}>
+          Load More
+        </p>
+      )}
     </div>
   );
 };
