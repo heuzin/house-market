@@ -1,10 +1,11 @@
 import { Link } from "react-router-dom";
 import { ReactComponent as DeleteIcon } from "../assets/svg/deleteIcon.svg";
+import { ReactComponent as EditIcon } from "../assets/svg/editIcon.svg";
 import bedIcon from "../assets/svg/bedIcon.svg";
 import bathtubIcon from "../assets/svg/bathtubIcon.svg";
 import PropTypes from "prop-types";
 
-const ListingItem = ({ listing, id, onDelete }) => {
+const ListingItem = ({ listing, id, onDelete, onEdit }) => {
   return (
     <li className="categoryListing">
       <Link
@@ -54,6 +55,14 @@ const ListingItem = ({ listing, id, onDelete }) => {
           onClick={() => onDelete(listing.id, listing.name)}
         />
       )}
+
+      {onEdit && (
+        <EditIcon
+          className="editIcon"
+          fill="rgb(54, 162, 235)"
+          onClick={() => onEdit(id)}
+        />
+      )}
     </li>
   );
 };
@@ -73,6 +82,7 @@ ListingItem.propTypes = {
   }).isRequired,
   id: PropTypes.string.isRequired,
   onDelete: PropTypes.func,
+  onEdit: PropTypes.func,
 };
 
 export default ListingItem;
