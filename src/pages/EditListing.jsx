@@ -16,6 +16,7 @@ import Spinner from "../components/Spinner";
 const EditListing = () => {
   const [loading, setLoading] = useState(false);
   const [listing, setListing] = useState(null);
+  // eslint-disable-next-line
   const [geolocationEnabled, setGeolocationEnabled] = useState(false);
   const [formData, setFormData] = useState({
     type: "rent",
@@ -55,12 +56,12 @@ const EditListing = () => {
   const isMounted = useRef(true);
 
   //   Redirect if listing is not user's
-  //   useEffect(() => {
-  //     if (listing && listing.userRef !== auth.currentUser.uid) {
-  //       toast.error("You cannot edit that listing");
-  //       navigate("/");
-  //     }
-  //   }, [auth.currentUser.uid, listing, navigate]);
+  useEffect(() => {
+    if (listing && listing.userRef !== auth.currentUser.uid) {
+      toast.error("You cannot edit that listing");
+      navigate("/");
+    }
+  }, [auth.currentUser.uid, listing, navigate]);
 
   // Fetch listing to edit
   useEffect(() => {

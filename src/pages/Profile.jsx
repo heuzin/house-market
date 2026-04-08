@@ -59,7 +59,7 @@ const Profile = () => {
     };
 
     fetchUserListings();
-  }, [auth.currentUser.displayName]);
+  }, [auth.currentUser.displayName, auth.currentUser.uid]);
 
   const onLogout = () => {
     auth.signOut();
